@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\Account;
 use App\Models\Wallet;
 
 class BaseController extends Controller
 {
     public function index()
     {
-        return view('welcome');
+        return view('dashboard');
     }
     public function create_user(RegisterRequest $request)
     {
@@ -21,7 +20,6 @@ class BaseController extends Controller
                 'password' => $request['password'],
                 'email' => $request['email'],
                 'adhar' => $request['adhar'],
-                'vpa' => $request['vpa'],
                 'contact_number' => $request['contact_number']
             ]
         )) {
@@ -29,22 +27,24 @@ class BaseController extends Controller
         } else
             echo "There's something wrong on our side!";
     }
+
     public function login_user(LoginRequest $request)
     {
         $data = Wallet::where(['username' => $request['username']])->first();
 
         if (password_verify($request['password'], $data['password'])) {
-            session()->put('username',$data['username']);
             // dd(session('username'));
+            
+            session()->flush();
             session()->put('id',$data['id']);
-            return view('dashboard');
+            session()->put('username',$data['username']);
+            return redirect(route('dashboard'));
         } else
             return redirect('/login')->withErrors(['password' => 'Invalid password.']);
     }
     public function logout()
     {
         session()->flush();
-        
         return redirect('home');
     }
 }

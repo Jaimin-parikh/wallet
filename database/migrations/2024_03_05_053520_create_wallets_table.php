@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('password');
             $table->bigInteger('adhar');
-            $table->string('vpa');
             $table->bigInteger('contact_number');
+            $table->double('balance')->default(0.0);
 
             $table->timestamps();
             $table->softDeletes();

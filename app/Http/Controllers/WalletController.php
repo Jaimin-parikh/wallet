@@ -2,82 +2,91 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
+use App\Http\Requests\TransactionRequest;
+use App\Http\Requests\TransferRequest;
 use App\Models\Wallet;
-use Illuminate\Http\Request;
-use PhpParser\Node\Expr\Cast\Double;
-
-use function Pest\Laravel\get;
 
 class WalletController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    //defining a function that will retrive balance
+    protected function get_balance($id)
     {
-        $id = session()->get('id');
-
-        if (Account::where('user_id', $id)->count() > 0)
-            echo "U already have wallet";
-        else
-            Account::create(['user_id' => $id]);
+        $current_balance = Wallet::where('id', $id)->first('balance');
+        $current_balance = $current_balance['balance'];
+        return (float)$current_balance;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    //To update  the balance
+    protected function update_balance($id, $amount)
+    {
+        $record = Wallet::where(['id' => $id])->first();
+        $record->update(['balance' => $amount]);
+    }
 
-    /**
-     * Display the specified resource.
-     */
     public function show()
     {
-        return view('show');
+        $bal = $this->get_balance(session('id'));
+        return view('show', ['balance' => $bal]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request)
+    //Function that will Get values From request and from database
+    public function get_values($request)
     {
-        $toAdd = $request['amount'];
+        //GEtting Amount to add
+        $amount = (float)$request['amount'];
+
+        // //GEtting Current Amount
         $id = session()->get('id');
-        $current_balance = Account::where('user_id', $id)->first('balance');
-        $current_balance = $current_balance['balance'];
-        $toAdd = bcadd($toAdd, $current_balance);
+        $current_balance = $this->get_balance($id);
+        return ['amount' => $amount, 'current_balance' => $current_balance];
+    }
 
-        $record = Account::where(['user_id' => $id])->first();
-        $record->update(['balance' => $toAdd]);
+    //To add money(Credit)
+    public function credit(TransactionRequest $request)
+    {
+        $temp = $this->get_values($request);
+        //Adding..
+        $toAdd = bcadd($temp['amount'], $temp['current_balance']);
 
-        session()->put('balance', Account::where('user_id', $id)->first());
+        //Updating balance in database
+        $this->update_balance(session('id'), $toAdd);
+
         return view('dashboard');
     }
 
-    public function credit(Request $request)
+    //To add money(debit)
+    public function debit(TransactionRequest $request)
     {
-        $toWithdraw = $request['amount'];
-        $id = session()->get('id');
-        $current_balance = Account::where('user_id', $id)->first('balance');
-        $current_balance = $current_balance['balance'];
-        if($current_balance>=$toWithdraw)
-        $toWithdraw = bcsub($current_balance,$toWithdraw);
-    else
-    return view('dashboard',['error'=>"insufficient balance, Available Balance : $current_balance"]);
+      
+        $temp = $this->get_values($request);
+        $current_balance = $temp['current_balance'];
+        $toWithdraw = $temp['toWithdraw'];
+        
+        //check if user has enough money
+        if ($current_balance >= $toWithdraw)
+            $toWithdraw = bcsub($current_balance, $toWithdraw);
+        else
+            return view('dashboard', ['error' => "insufficient balance, Available Balance : $current_balance"]);
 
-        $record = Account::where(['user_id' => $id])->first();
-        $record->update(['balance' => $toWithdraw]);
+        //Updating balance in database
+        $this->update_balance(session('id'), $toWithdraw);
 
-        session()->put('balance', Account::where('user_id', $id)->first());
         return view('dashboard');
+    }
+
+    //TO transfer Money
+    public function transfer(TransferRequest $request){
+        
+        //Debit money from Sender's Account
+        $id = session('id');
+        $amount = bcsub($this->get_balance($id),$request['amount']);
+        $this->update_balance($id,$amount);
+
+        //Credit into Receiver's account
+        $id = $request['receiveracc'];
+        $amount = bcadd($this->get_balance($id),$request['amount']);
+        $this->update_balance($id,$amount);
+
+        return view('dashboard',['error'=>"Successfully Transfered {$request['amount']  } into {$request['receivername'] }'s account"]);
     }
 }

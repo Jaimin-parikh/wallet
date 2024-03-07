@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class TransactionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,17 +22,13 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "username" =>'required|unique:wallets,username',
-            "password" =>'required',
-            "email" =>'required|unique:wallets,email|email',
-            "adhar" =>'required|unique:wallets,adhar|digits:12',
-            "contact_number" =>'required|unique:wallets,contact_number|digits:10',
+            'amount' =>'numeric'
         ];
     }
-    // public function messages()
-    // {
-    //     return [
-
-    //     ];
-    // }
+    public function messages()
+    {
+        return [
+            'amount.numeric' => 'Amount must be numeric',
+        ];
+    }
 }

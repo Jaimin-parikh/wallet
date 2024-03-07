@@ -1,10 +1,3 @@
-{{-- @if (session()->has('id'))
-    
-<button><a href='{{route('logout')}}' style='text-decoration:none'>Logout</a></button>
-@else
-You are Logged out
-@endif --}}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,30 +5,54 @@ You are Logged out
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>DashBoard</title>
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 
-<body bgcolor="black">
-    <table bgcolor = "white" width = '1200px' cellpadding='10px'>
+<body>
+    {{-- Nav bar --}}
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{route('dashboard')}}">GGWallet</a>
 
-        <tr><td>
-            @if (App\Models\Account::where('user_id', session()->get('id'))->count() == 0)
-                <button><a href="{{ route('wallet.create') }}" style="text-decoration: none">
-                            create A wallet</a>
-                    </button>
-            @else
-            <button><a href="{{ route('wallet_show') }}" style="text-decoration: none">
-                My Wallet</a>
-        </button>
-            @endif</td>
-            <td>
-               @if (!empty($error))
-               {{$error}}
-               @endif 
-                   
-            </td>
-        </tr>
-    </table>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    @if (session()->has('username'))
+                        <li class="nav-item">
+                            <a class="nav-link " aria-current="page" href="{{route('wallet_show')}}">Mywallet</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('credit')}}">Add Funds</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('debit')}}">Withdraw Funds</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('transfer')}}">Transfer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('logout') }}">Logout</a>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">register</a>
+                        </li>
+                    @endif
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div style="color: red">
+        @if (!empty($error))
+            {{ $error }}
+        @endif 
+    </div>
 </body>
 
 </html>
