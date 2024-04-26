@@ -2,6 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Wallet;
+use App\Rules\Amount;
+use App\Rules\SelfTransfer;
+use App\Rules\VerifyReceiverDetails;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TransferRequest extends FormRequest
@@ -21,10 +25,11 @@ class TransferRequest extends FormRequest
      */
     public function rules(): array
     {
+        // $amount = Wallet::where('id',session('id'))->pluck('balance')->toArray()[0];
         return [
-            'receiveracc' => 'required|exists:wallets,id|numeric',
-            'receivername' => 'required|exists:wallets,username',
-            'amount' => 'required|numeric'
+            'receiveracc' => ["required","exists:wallets,id","numeric", new SelfTransfer],
+            'receivername' => ["required","exists:wallets,username",new VerifyReceiverDetails],
+            'amount' => ["required","numeric","min:0",new Amount]
         ];
     }
     public function messages()
@@ -34,6 +39,7 @@ class TransferRequest extends FormRequest
             'receivername.required'=>"Receiver's name is required",
             'receiveracc.exists'=>"Receiver's account number doesn't exists in the database",
             'receivername.exists'=>"Receiver's name doesn't exists in the database",
+            "amount"
         ];
     }
 }

@@ -1,38 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-</head>
-
-<body>
+@extends('layouts.app')
+@section('content')
     <br><br>
-    @if ($todo == 'credit')
-        <form action="{{ route('credit') }}" method="POST">
+    <div class="bg-gray-700 text-white rounded p-5 ml-80 mt-10  w-[400px]">
+        
+        <p class="m-2 text-white">{{ session('error') }}</p>
+        
+        <p class="m-2 text-white">Your Current Balance is : {{ $balance }}</p>
+        @if ($todo == 'credit')
+            <p class="m-2">How much Money You want to add?</p>
+            <form action="{{ route('credit') }}" method="POST">
+            @else
+                <p class="m-2">How much Money You want to withdraw?</p>
+                <form action="{{ route('debit') }}" method="POST">
+        @endif
 
-    @else
-        <form action="{{ route('debit') }}" method="POST"> 
-    @endif
+        @csrf
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount :</label>
+            <input type="text" name="amount" class="outline-none rounded p-1 text-black " placeholder="Enter Amount">
+        </div>
+        <div style="color: red">
+            @error('amount')
+                {{ $message }}
+            @enderror
 
-     @csrf
-    <div class="mb-3">
-        <label for="amount" class="form-label">Amount :</label>
-        <input type="text" name="amount" class="form-control">
+        </div>
+        <button type="submit" class="bg-white text-black rounded-full p-2">Submit</button>
+        </form>
     </div>
-    <div style="color: red">
-        @error('amount')
-            {{ $message }}
-        @enderror
-
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-</body>
-
-</html>
+@endsection

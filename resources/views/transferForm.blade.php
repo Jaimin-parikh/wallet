@@ -1,61 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
+    @extends('layouts.app')
+    @section('title', 'transfer')
+    @section('content')
+        <br>
+        <br>
+        <div class="bg-gray-700 text-white rounded p-5 ml-80 mt-10  w-[400px]">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Transfer</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-</head>
+            <p class="m-2 text-white">{{ session('error') }}</p>
 
-<body>
-    <br><br>
-    <form action="{{ route('transfer') }}" method="POST">
-        @csrf
-        <div class="mb-3">
-            <label for="From" class="form-label">Sender's Number:</label>
-            <input type="text" name="fromaccno" class="form-control" disabled value="{{ session('id') }}">
-        </div>
+            {{-- <p class="m-2 text-white">Your Current Balance is : {{ $balance }}</p> --}}
 
-        <div class="mb-3">
-            <label for="username" class="form-label">Sender's Name:</label>
-            <input type="text" name="fromusername" class="form-control" disabled value="{{ session('username') }}">
-        </div>
+            <p class="m-2">How much Money You want to Transfer?</p>
+            <form action="{{ route('transfer') }}" method="POST">
+                @csrf
+                <table class="p-3">
+                    <div class="mb-3">
+                        <tr>
+                            <td class="p-1"><label for="From" class="form-label">Sender's Number</td>
+                            <td class="p-1">:</td></label>
+                            <td class="p-1">
+                                <input type="text" name="From" class="outline-none rounded p-1 text-white " disabled
+                                    value="{{ session('id') }}">
+                            </td>
+                        </tr>
+                    </div>
+                    <div class="mb-3">
+                        <tr>
+                            <td class="p-1"><label for="username" class="form-label">Sender's Number</td>
+                            <td class="p-1">:</td></label>
+                            <td class="p-1">
+                                <input type="text" name="fromusername" class="outline-none rounded p-1 text-white "
+                                    disabled value="{{ session('username') }}">
+                            </td>
+                        </tr>
+                    </div>
 
-        <div class="mb-3">
-            <label for="receiveraccno" class="form-label">Receiver's Number:</label>
-            <input type="text" name="receiveracc" class="form-control">
-        </div>
-        <div style="color: red">
+                    <div class="mb-3">
+                        <tr>
+                            <td class="p-1"><label for="amount" class="form-label">Amount</td>
+                            <td class="p-1">:</td></label>
+                            <td class="p-1">
+                                <input type="text" name="amount" class="outline-none rounded p-1 text-black "
+                                    placeholder="Enter Amount">
+                            </td>
 
-            @error('receiveracc')
-                *{{ $message }}
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="receivername" class="form-label">Receiver's Name:</label>
-            <input type="text" name="receivername" class="form-control">
-        </div>
-        <div style="color: red">
+                        </tr>
+                        <div style="color:red"> @error('amount')
+                            *{{ $message }}
+                            @enderror 
+                            @error('receivername')
+                            <br>*{{ $message }}
+                            @enderror
+                            @error('receiveracc')
+                            <br>*{{ $message }}
+                            @enderror
 
-            @error('receivername')
-                *{{ $message }}
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="amount" class="form-label">Amount:</label>
-            <input type="text" name="amount" class="form-control">
-        </div>
-        <div style="color: red">
+                        </div>
+                    </div>
 
-            @error('amount')
-                *{{ $message }}
-            @enderror
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</body>
+                    <div class="mb-3">
+                        <tr>
+                            <td class="p-1"><label for="receiveraccno" class="form-label">Receiver's Number</td>
+                            <td class="p-1">:</td></label>
+                            <td class="p-1">
+                                <input type="text" name="receiveracc" class="outline-none rounded p-1 text-black "
+                                    placeholder="Account Number">
+                            </td>
+                        </tr>
+                    </div>
+                    <div class="mb-3">
+                        <tr>
+                            <td class="p-1"><label for="receivername" class="form-label">Receiver's Name</td>
+                            <td class="p-1">:</td></label>
+                            <td class="p-1">
+                                <input type="text" name="receivername" class="outline-none rounded p-1 text-black "
+                                    placeholder="Name">
+                            </td>
+                        </tr>
+                    </div>
 
-</html>
+                </table>
+                <input type="submit" value="Submit" class="bg-white text-black rounded-full p-2">
+            </form>
+        </div>
+    @endsection

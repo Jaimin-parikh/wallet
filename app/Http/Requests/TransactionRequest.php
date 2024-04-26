@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Amount;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TransactionRequest extends FormRequest
@@ -13,7 +14,7 @@ class TransactionRequest extends FormRequest
     {
         return true;
     }
-
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,13 +23,14 @@ class TransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount' =>'numeric'
+            'amount' =>["required","numeric","min:1"]
         ];
     }
     public function messages()
     {
         return [
             'amount.numeric' => 'Amount must be numeric',
+            'amount.min' => 'Amount must be greater than 0',
         ];
     }
 }

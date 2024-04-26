@@ -1,46 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
+@section('title', 'login')
+@section('content')
+    <br>
+    <br>
+    <div class="bg-gray-700 text-white rounded p-5 ml-80 mt-10  w-[400px]">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Home</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-</head>
+        <p class="m-2 ">Login Here!!</p>
+        <form action="{{ route('login') }}" method="POST">
+            @csrf
+            <table class="p-3">
+                    <div style="color:red"> @error('amount')
+                        *{{ $message }}
+                        @enderror 
+                        @error('username')
+                        <br>*{{ $message }}
+                        @enderror
+                        @error('password')
+                        <br>*{{ $message }}
+                        @enderror
 
-<body>
-    <br><br>
-    <form action="{{ route('login') }}" method="POST">
-        @csrf
-        <div class="mb-3">
-            <label for="username" class="form-label">Username :</label>
-            <input type="text" name="username" class="form-control" id="exampleInputEmail1"
-                aria-describedby="emailHelp">
-        </div>
-        <div style="color: red">
+                    </div>
+                </div>
 
-            @error('username')
-                *{{ $message }}
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password:</label>
-            <input type="password" name="password" class="form-control" id="exampleInputPassword1">
-        </div>
-        <div style="color: red">
+                <div class="mb-3">
+                    <tr>
+                        <td class="p-1"><label for="username" class="form-label">Username</td>
+                        <td class="p-1">:</td></label>
+                        <td class="p-1">
+                            <input type="text" name="username" class="outline-none rounded p-1 text-black "
+                                placeholder="Do not enter your Email">
+                        </td>
+                    </tr>
+                </div>
+                <div class="mb-3">
+                    <tr>
+                        <td class="p-1"><label for="password" class="form-label">Password</td>
+                        <td class="p-1">:</td></label>
+                        <td class="p-1">
+                            <input type="password" name="password" class="outline-none rounded p-1 text-black "
+                                placeholder="Password">
+                        </td>
+                    </tr>
+                </div>
 
-            @error('password')
-                *{{ $message }}
-            @enderror
-        </div>
-        <div class="mb-3">Don't have an account?
-            <a href="{{ route('register') }}">Signup Here</a>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</body>
-
-</html>
+            </table>
+            <input type="submit" value="Submit" class="bg-white text-black rounded-full p-2">
+        </form>
+    </div>
+@endsection
